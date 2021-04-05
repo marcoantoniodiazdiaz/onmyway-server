@@ -1,54 +1,35 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IVehiculos extends Document {
-    placa: string
-    marca: string
-    submarca: string
-    color: string
-    poliza: string
-    cliente: string
-    foto: string
-    active: boolean
-}
+export class Vehiculos extends Model { }
 
-const VehiculosSchema: Schema = new Schema({
+Vehiculos.init({
+    // TODO: Relacion con marcas
+    // TODO: Relacion con usuario
     placa: {
-        type: String,
-        unique: true,
-        required: [true, 'El campo "placa" es obligatorio'],
-    },
-    marca: {
-        type: ObjectId,
-        ref: 'Marcas',
-        required: [true, 'El campo "marca" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            max: 10,
+        },
     },
     submarca: {
-        type: String,
-        required: [true, 'El campo "submarca" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: [2, 55],
+        },
     },
     color: {
-        type: String,
-        required: [true, 'El campo "color" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: [2, 55],
+        },
     },
-    cliente: {
-        type: ObjectId,
-        ref: 'Usuarios',
-        required: [true, 'El campo "cliente" es obligatorio'],
-    },
-    foto: {
-        type: String,
-        required: [true, 'El campo "foto" es obligatorio'],
-    },
-    poliza: {
-        type: String,
-        required: [true, 'El campo "poliza" es obligatorio'],
-    },
-    active: {
-        type: Boolean,
-        default: true,
-    },
-});
 
-// Export the model and return your IVehiculos interface
-export default mongoose.model<IVehiculos>('Vehiculos', VehiculosSchema);
+}, {
+    sequelize, modelName: 'vehiculos',
+});

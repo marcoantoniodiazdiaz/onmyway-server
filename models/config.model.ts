@@ -1,21 +1,18 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IConfig extends Document {
-    nombre: string
-    valor: number
-}
+export class Config extends Model { }
 
-const ConfigSchema: Schema = new Schema({
+Config.init({
     propiedad: {
-        type: String,
+        type: DataTypes.STRING,
         unique: true,
-        required: [true, 'El campo "propiedad" es obligatorio'],
+        allowNull: false,
     },
     valor: {
-        type: Number,
-        required: [true, 'El campo "valor" es obligatorio'],
-    },
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    }
+}, {
+    sequelize, modelName: 'config',
 });
-
-// Export the model and return your IConfig interface
-export default mongoose.model<IConfig>('Config', ConfigSchema);

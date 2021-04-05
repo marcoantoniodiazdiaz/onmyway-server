@@ -1,27 +1,27 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IContacto extends Document {
-    nombre: string
-    email: string
-    active: boolean
-}
+export class Contactos extends Model { }
 
-const ContactoSchema: Schema = new Schema({
+Contactos.init({
     nombre: {
-        type: String,
-        required: [true, 'El campo "nombre" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            is: /^[a-ZA-Z\s]{5,255}$/
+        },
     },
     email: {
-        type: String,
-        required: [true, 'El campo "email" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true,
+        }
     },
-    de: {
-        type: ObjectId,
-        ref: 'Usuarios',
-        required: [true, 'El campo "de" es obligatorio'],
-    }
-});
 
-// Export the model and return your IContacto interface
-export default mongoose.model<IContacto>('Contactos', ContactoSchema);
+    // TODO: "de" Relacion con usuario
+}, {
+    sequelize, modelName: 'contactos',
+});

@@ -1,62 +1,67 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IUsuarios extends Document {
-    nombre: string
-    email: string
-    password: string
-    tipo: string
-    foto: string
-    telefono: string
-    active: boolean
-    google: boolean
-    fondos: number
-    cal: number[]
-}
+export class Usuarios extends Model { }
 
-const UsuariosSchema: Schema = new Schema({
+Usuarios.init({
     nombre: {
-        type: String,
-        required: [true, 'El campo "nombre" es obligatorio'],
-    },
-    password: {
-        type: String,
-        required: [true, 'El campo "password" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            is: /^[a-zA-Z\s]{5,255}$/
+        },
     },
     email: {
-        type: String,
-        unique: true,
-        required: [true, 'El campo "email" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true,
+        },
     },
-    foto: {
-        type: String,
-        required: [true, 'El campo "foto" es obligatorio'],
-    },
-    telefono: {
-        type: String,
-        unique: true,
-        required: [true, 'El campo "telefono" es obligatorio'],
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     tipo: {
-        type: String,
-        required: [true, 'El campo "tipo" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            is: /^(USER_ROLE)|(DRIVER_ROLE)$/
+        },
     },
-    fondos: {
-        type: Number,
-        default: 0,
+    foto: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isUrl: true,
+        },
     },
-    cal: {
-        type: [Number],
-        default: [],
-    },
-    google: {
-        type: Boolean,
-        default: false,
+    telefono: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isNumeric: true,
+        },
     },
     active: {
-        type: Boolean,
-        default: false,
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
-});
+    google: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    fondos: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+    },
+    cal: {
+        type: DataTypes.ARRAY(DataTypes.DOUBLE),
+        allowNull: false,
+    },
 
-// Export the model and return your IUsuarios interface
-export default mongoose.model<IUsuarios>('Usuarios', UsuariosSchema);
+}, {
+    sequelize, modelName: 'usuarios'
+});

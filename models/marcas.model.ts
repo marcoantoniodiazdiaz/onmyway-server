@@ -1,21 +1,15 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IMarcas extends Document {
-    nombre: string
-    active: boolean
-}
+export class Marcas extends Model { }
 
-const MarcasSchema: Schema = new Schema({
+Marcas.init({
     nombre: {
-        type: String,
+        type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
-        required: [true, 'El campo "nombre" es obligatorio'],
-    },
-    active: {
-        type: Boolean,
-        default: true,
-    },
+    }
+}, {
+    sequelize, modelName: 'marcas'
 });
-
-// Export the model and return your IMarcas interface
-export default mongoose.model<IMarcas>('Marcas', MarcasSchema);

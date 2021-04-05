@@ -1,74 +1,46 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-export interface IViajes extends Document {
-    fromLat: number
-    fromLon: number
-    toLat: number
-    toLon: number
-    fromEscrito: string
-    toEscrito: string
-    usuarioId: string
-    conductor: string
-    vehiculo: string
-    fecha: string
-    precio: number
-    distancia: number
-}
+export class Viajes extends Model { }
 
-const ViajesSchema: Schema = new Schema({
+Viajes.init({
     fromLat: {
-        type: Number,
-        required: [true, 'El campo "fromLat" es obligatorio'],
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     },
     fromLon: {
-        type: Number,
-        required: [true, 'El campo "fromLon" es obligatorio'],
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     },
     toLat: {
-        type: Number,
-        required: [true, 'El campo "toLat" es obligatorio'],
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     },
     toLon: {
-        type: Number,
-        required: [true, 'El campo "toLon" es obligatorio'],
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     },
     fromEscrito: {
-        type: String,
-        required: [true, 'El campo "fromEscrito" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     toEscrito: {
-        type: String,
-        required: [true, 'El campo "toEscrito" es obligatorio'],
-    },
-    usuarioId: {
-        type: ObjectId,
-        ref: 'Usuarios',
-        required: [true, 'El campo "usuarioId" es obligatorio'],
-    },
-    conductor: {
-        type: ObjectId,
-        ref: 'Usuarios',
-        default: null,
-    },
-    vehiculo: {
-        type: ObjectId,
-        ref: 'Vehiculos',
-        default: null,
-    },
-    fecha: {
-        type: String,
-        required: [true, 'El campo "fecha" es obligatorio'],
-    },
-    distancia: {
-        type: Number,
-        required: [true, 'El campo "distancia" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     precio: {
-        type: Number,
-        required: [true, 'El campo "precio" es obligatorio'],
+        type: DataTypes.DOUBLE,
+        allowNull: false,
     },
+    distancia: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+    }
+    // TODO: Relacion con el usuario
+    // TODO: Relacion con el conductor
+    // TODO: Relacion con el vehiculo
+}, {
+    sequelize, modelName: 'viajes'
 });
-
-// Export the model and return your IViajes interface
-export default mongoose.model<IViajes>('Viajes', ViajesSchema);
