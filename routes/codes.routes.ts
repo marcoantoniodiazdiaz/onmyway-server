@@ -1,24 +1,31 @@
 import { Request, Response } from 'express';
 
 import { router as app } from './router';
-
-import CodesSchema from '../models/codes.model';
 import UsuariosSchema from '../models/usuarios.model';
 import { MongoError } from 'mongodb';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
+import { Codes } from '../models/codes.model';
+import sequelize from '../database/database';
 
 app.post('/codes', (req: Request, res: Response) => {
     let body = req.body;
 
     const newCode = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000).toString();
 
-    let values = new CodesSchema({
+    Codes.create({
         email: body.email,
         valor: newCode,
-    });
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 
-    CodesSchema.create(values, async (err: MongoError, data: any) => {
+    /*let values = new CodesSchema({
+        email: body.email,
+        valor: newCode,
+    });*/
+
+
+    /*CodesSchema.create(values, async (err: MongoError, data: any) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -85,48 +92,37 @@ app.post('/codes', (req: Request, res: Response) => {
             data,
             email: info.messageId
         });
-    });
+    });*/
 });
 
-app.post('/codes/verify', (req: Request, res: Response) => {
+app.post('/codes/verify', async (req: Request, res: Response) => {
     let body = req.body;
 
+    const t = await sequelize.transaction();
     const newPassword = bcrypt.hashSync(body.password, 10);
-    console.log('Hola');
-    console.log(body);
 
-    CodesSchema.findOne({ valor: body.valor }).exec((err, datax) => {
-        console.log(datax);
-        if (datax) {
-            UsuariosSchema.findOneAndUpdate({ email: datax.email }, { password: newPassword }, { new: true, runValidators: true }, (err, data) => {
-                if (err) {
-                    return res.json({
-                        ok: false,
-                        err
-                    });
-                }
+    try {
+        const code = await Codes.findOne({
+            where: {
+                valor: body.valor,
+            }
+        });
 
-                CodesSchema.findByIdAndRemove(datax._id, (err, datay) => {
-                    if (datay) {
-                        res.json({
-                            ok: true,
-                            data: datay
-                        });
-                    } else {
-                        res.json({
-                            ok: false,
-                            err
-                        });
-                    }
-                });
-            });
+        if (code) {
+            // TODO: Le cambio al usuario la contraseña
+            // TODO: Elimino el codigo en la base de datos}
+            // Si todo sale bien hago el transcact.commit()
         } else {
-            res.json({
-                ok: false,
-                err: 'El codigo es invalido o ya caduco'
-            });
+            // TODO: Envio el error de que el codigo no existe
+            // Por seguridad hago el transact.rollback()
         }
-    });
+
+
+
+
+    } catch (e) {
+
+    }
 });
 
 export default app;

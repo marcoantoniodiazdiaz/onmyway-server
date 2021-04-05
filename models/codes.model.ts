@@ -1,21 +1,24 @@
-import mongoose, { Schema, Document } from 'mongoose';
 
-export interface ICodes extends Document {
-    email: string
-    valor: string
-}
+import { DataTypes, Model } from 'sequelize/types';
+import sequelize from '../database/database';
 
-const CodesSchema: Schema = new Schema({
+export class Codes extends Model { }
+
+Codes.init({
     email: {
-        type: String,
-        required: ['true', 'El campo "email" es obligatorio'],
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true,
+        }
     },
     valor: {
-        type: String,
-        default: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000).toString()
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            is: /^[0-9]{6}$/
+        },
     },
+}, {
+    sequelize, modelName: "codes",
 });
-
-
-// Export the model and return your ICodes interface
-export default mongoose.model<ICodes>('Codes', CodesSchema);
