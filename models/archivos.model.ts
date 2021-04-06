@@ -19,10 +19,6 @@ Archivos.init({
             isUrl: true,
         }
     },
-    active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
 }, {
     sequelize, modelName: "archivos",
 });

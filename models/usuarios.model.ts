@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+
 import { DataTypes, Model } from 'sequelize/types';
 import sequelize from '../database/database';
 

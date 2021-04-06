@@ -9,7 +9,10 @@ import { Marcas } from '../models/marcas.model';
 
 export const createAssosiations = () => {
 
-    Usuarios.hasMany(Viajes);
+    Usuarios.hasMany(Viajes, { foreignKey: 'usuario' });
+    Viajes.belongsTo(Usuarios);
+
+    Usuarios.hasMany(Viajes, { foreignKey: 'conductor' });
     Viajes.belongsTo(Usuarios);
 
     Vehiculos.hasMany(Viajes);

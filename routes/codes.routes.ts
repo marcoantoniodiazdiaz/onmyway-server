@@ -7,6 +7,7 @@ import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import { Codes } from '../models/codes.model';
 import sequelize from '../database/database';
+import { Usuarios } from '../models/usuarios.model';
 
 app.post('/codes', (req: Request, res: Response) => {
     let body = req.body;
@@ -109,6 +110,13 @@ app.post('/codes/verify', async (req: Request, res: Response) => {
         });
 
         if (code) {
+            await Usuarios.update({
+                password: newPassword,
+            }, {
+                where: {
+
+                }
+            })
             // TODO: Le cambio al usuario la contraseña
             // TODO: Elimino el codigo en la base de datos}
             // Si todo sale bien hago el transcact.commit()
