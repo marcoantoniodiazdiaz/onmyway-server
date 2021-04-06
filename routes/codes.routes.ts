@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 
 import { router as app } from './router';
-import UsuariosSchema from '../models/usuarios.model';
-import { MongoError } from 'mongodb';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import { Codes } from '../models/codes.model';
@@ -109,27 +107,46 @@ app.post('/codes/verify', async (req: Request, res: Response) => {
             }
         });
 
+
         if (code) {
+            // Le cambio al usuario la contraseña
             await Usuarios.update({
                 password: newPassword,
             }, {
                 where: {
+                    email: code.getDataValue('email'),
+                },
+                transaction: t
+            });
 
-                }
-            })
-            // TODO: Le cambio al usuario la contraseña
-            // TODO: Elimino el codigo en la base de datos}
+            // Elimino el codigo en la base de datos
+            await Codes.destroy({
+                where: {
+                    id: code.getDataValue('id'),
+                },
+                transaction: t
+            });
             // Si todo sale bien hago el transcact.commit()
+            t.commit();
+
+            return res.json({
+                ok: true,
+                data: 'La contraseña ha sido actualizada exitosamente'
+            });
         } else {
-            // TODO: Envio el error de que el codigo no existe
-            // Por seguridad hago el transact.rollback()
+            // Envio el error de que el codigo no existe
+            return res.status(400).json({
+                ok: false,
+                err: 'El codigo no existe o ya expiró'
+            });
         }
-
-
-
-
     } catch (e) {
-
+        // Por seguridad hago el transact.rollback()
+        t.rollback();
+        return res.status(400).json({
+            ok: false,
+            err: 'Ocurrio un error inesperado, porfavor, contacta con soporte'
+        });
     }
 });
 

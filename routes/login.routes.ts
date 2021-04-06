@@ -1,10 +1,11 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { router as app } from './router';
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import UsuariosSchema from '../models/usuarios.model';
 import { validarGoogleIDToken } from '../helpers/google-verify-token';
+import { Usuarios } from '../models/usuarios.model';
+import sequelize from '../database/database';
 
 app.post('/login', (req: Request, res: Response) => {
 
@@ -17,14 +18,9 @@ app.post('/login', (req: Request, res: Response) => {
         });
     }
 
-    UsuariosSchema.findOne({ email: body.email }).exec((err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
+    Usuarios.findOne({
+        where: { email: body.emai },
+    }).then((data) => {
         if (!data) {
             return res.status(400).json({
                 ok: false,
@@ -32,7 +28,7 @@ app.post('/login', (req: Request, res: Response) => {
             });
         }
 
-        if (!bcrypt.compareSync(body.password, data.password)) {
+        if (!bcrypt.compareSync(body.password, data.getDataValue('password'))) {
             return res.status(400).json({
                 ok: false,
                 err: 'La contraseña es incorrecta'
@@ -48,12 +44,19 @@ app.post('/login', (req: Request, res: Response) => {
             data,
             token
         });
+    }).catch((err) => {
+        return res.status(400).json({
+            ok: false,
+            err
+        });
     });
 });
 
 app.post('/login/google', async (req: Request, res: Response) => {
 
     const body = req.body;
+
+    const t = sequelize.transaction();
 
     if (!body.token) {
         return res.status(400).json({
@@ -70,20 +73,13 @@ app.post('/login/google', async (req: Request, res: Response) => {
         })
     }
 
-    UsuariosSchema.findOne({
-        email: usuario.email
-    }).exec((err, data) => {
-
-        if (err) {
-            res.status(401).json({
-                ok: false,
-                err,
-            });
-        }
-
+    Usuarios.findOne({
+        where: {
+            email: usuario.email
+        },
+    }).then((data) => {
         if (!data) {
-
-            let values = new UsuariosSchema({
+            await Usuarios.create({
                 nombre: usuario.username,
                 email: usuario.email,
                 password: "",
@@ -91,9 +87,10 @@ app.post('/login/google', async (req: Request, res: Response) => {
                 foto: usuario.picture,
                 tipo: "USER_ROLE",
                 google: true
-            });
 
-            UsuariosSchema.create(values, (err, r) => {
+            }, { transaction: t });
+
+            (err, r) => {
 
                 if (err) {
                     res.status(401).json({
@@ -111,17 +108,17 @@ app.post('/login/google', async (req: Request, res: Response) => {
                     token
                 });
             });
-        } else {
-            const token = jwt.sign(
-                { data }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
-            );
+} else {
+    const token = jwt.sign(
+        { data }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
+    );
 
-            return res.json({
-                ok: true,
-                data,
-                token
-            });
-        }
+    return res.json({
+        ok: true,
+        data,
+        token
+    });
+}
     });
 });
 
