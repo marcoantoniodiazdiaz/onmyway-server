@@ -1,177 +1,93 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { router as app } from './router';
-import * as _ from 'underscore';
+import { Viajes } from '../models/viajes.model';
 
-import ViajesSchema from '../models/viajes.model';
-import { MongoError } from 'mongodb';
 
-app.get('/viajes', (req: Request, res: Response) => {
-    ViajesSchema.find()
-        .sort({
-            fecha: -1
-        })
-        .limit(50)
-        .populate('conductor')
-        .populate('usuarioId')
-        .populate({
-            path: 'vehiculo',
-            populate: 'marca'
-        })
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
+app.get('/viajes', (res: Response) => {
 
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Viajes.findAll({
+        order: [
+            ['createdAt', 'DESC']
+        ]
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.get('/viajes/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    ViajesSchema.findById(id)
-        .sort({
-            fecha: -1
-        })
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Viajes.findByPk(id, {})
+        .then((data) => res.json({ ok: true, data })
+        ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 
 app.get('/viajes/usuario/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    ViajesSchema.find({ usuarioId: id })
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Viajes.findAll({
+        where: { usuario: id },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 
 app.get('/viajes/conductor/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    ViajesSchema.find({ conductor: id })
-        .sort({
-            fecha: 1,
-        })
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Viajes.findAll({
+        where: { conductor: id },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.post('/viajes', (req: Request, res: Response) => {
     let body = req.body;
-    console.log(body);
-    // console.log(body);
 
-    let values = new ViajesSchema({
+    Viajes.create({
         fromLat: body.fromLat,
         fromLon: body.fromLon,
         toLat: body.toLat,
         toLon: body.toLon,
         fromEscrito: body.fromEscrito,
         toEscrito: body.toEscrito,
-        // usuario: body.usuario,
-        usuarioId: body.usuarioId,
+        usuario: body.usuario,
         fecha: new Date().toISOString(),
         precio: body.precio,
         distancia: body.distancia,
-    });
-
-    ViajesSchema.create(values, (err: MongoError, data: any) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data
-        });
-    });
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.put('/viajes/:id', (req: Request, res: Response) => {
     const id = req.params.id;
-    let body = _.pick(req.body, [
-        'submarca',
-        'conductor',
-        'vehiculo',
-        'active',
-    ]);
+    let body = req.body;
 
-    ViajesSchema.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
+    Viajes.update({
+        submarca: body.submarca,
+        conductor: body.conductor,
+        vehiculo: body.vehiculo,
+    }, {
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.delete('/viajes/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    ViajesSchema.findByIdAndRemove(id, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
+    Viajes.destroy({
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
 });
 
 export default app;

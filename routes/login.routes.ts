@@ -56,12 +56,12 @@ app.post('/login/google', async (req: Request, res: Response) => {
 
     const body = req.body;
 
-    const t = sequelize.transaction();
+    const t = await sequelize.transaction();
 
     if (!body.token) {
         return res.status(400).json({
             ok: false,
-            err: 'Invalid token'
+            err: 'Token invalido'
         });
     }
 
@@ -73,13 +73,13 @@ app.post('/login/google', async (req: Request, res: Response) => {
         })
     }
 
-    Usuarios.findOne({
-        where: {
-            email: usuario.email
-        },
-    }).then((data) => {
-        if (!data) {
-            await Usuarios.create({
+    try {
+        const usuarioDB = await Usuarios.findOne({
+            where: { email: usuario.email }
+        });
+
+        if (!usuarioDB) {
+            const nuevoUsuario = await Usuarios.create({
                 nombre: usuario.username,
                 email: usuario.email,
                 password: "",
@@ -90,36 +90,38 @@ app.post('/login/google', async (req: Request, res: Response) => {
 
             }, { transaction: t });
 
-            (err, r) => {
+            const token = jwt.sign(
+                { nuevoUsuario }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
+            );
 
-                if (err) {
-                    res.status(401).json({
-                        ok: false,
-                        err,
-                    });
-                }
+            t.commit(); // Guardamos el registro
 
-                const token = jwt.sign(
-                    { r }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
-                );
-                return res.json({
-                    ok: true,
-                    data: r,
-                    token
-                });
+            return res.json({
+                ok: true,
+                data: nuevoUsuario,
+                token
             });
-} else {
-    const token = jwt.sign(
-        { data }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
-    );
 
-    return res.json({
-        ok: true,
-        data,
-        token
-    });
-}
-    });
+
+        } else {
+            const token = jwt.sign(
+                { usuarioDB }, "jkw~3bBCCg*aU^XZ2ywmKru2.=P{v-9vNp(B$w'J'KK<ufC4g$", { expiresIn: '1d' }
+            );
+
+            return res.json({
+                ok: true,
+                data: usuarioDB,
+                token
+            });
+        }
+
+    } catch (error) {
+        t.rollback();
+        return res.status(401).json({
+            ok: true,
+            err: 'Datos de inicio de sesión invalidos',
+        });
+    }
 });
 
 

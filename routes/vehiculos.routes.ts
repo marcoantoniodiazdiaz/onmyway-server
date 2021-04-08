@@ -1,140 +1,83 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { router as app } from './router';
-import * as _ from 'underscore';
 
-import VehiculosSchema from '../models/vehiculos.model';
-import { MongoError } from 'mongodb';
+import { Vehiculos } from '../models/vehiculos.model';
 
-app.get('/vehiculos', (req: Request, res: Response) => {
-    VehiculosSchema
-        .find({ active: true })
-        .populate('cliente')
-        .populate('marca')
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
+app.get('/vehiculos', (res: Response) => {
 
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Vehiculos.findAll()
+        .then((data) => res.json({ ok: true, data })
+        ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.get('/vehiculos/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    VehiculosSchema.findById(id)
-        .populate('cliente')
-        .populate('marca')
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
-
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Vehiculos.findByPk(id)
+        .then((data) => res.json({ ok: true, data })
+        ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 // Por usuario
 app.get('/vehiculos/usuario/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    VehiculosSchema.find({ cliente: id })
-        .populate('cliente')
-        .populate('marca')
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
+    // TODO: Terminar esta ruta
 
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    // VehiculosSchema.find({ cliente: id })
+    //     .populate('cliente')
+    //     .populate('marca')
+    //     .exec((err, data) => {
+    //         if (err) {
+    //             return res.status(400).json({
+    //                 ok: false,
+    //                 err
+    //             });
+    //         }
+
+    //         res.json({
+    //             ok: true,
+    //             data
+    //         });
+    //     });
 });
 
 app.post('/vehiculos', (req: Request, res: Response) => {
     let body = req.body;
 
-    let values = new VehiculosSchema({
+    Vehiculos.create({
         placa: body.placa,
         marca: body.marca,
         submarca: body.submarca,
         color: body.color,
-        foto: body.foto,
         cliente: body.cliente,
-        poliza: body.poliza,
-    });
-
-    VehiculosSchema.create(values, (err: MongoError, data: any) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data
-        });
-    });
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.put('/vehiculos/:id', (req: Request, res: Response) => {
     const id = req.params.id;
-    let body = _.pick(req.body, [
-        'submarca',
-        'active',
-    ]);
+    let body = req.body;
 
-    VehiculosSchema.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
+    Vehiculos.update({
+        marca: body.marca,
+        submarca: body.submarca,
+        color: body.color,
+    }, {
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.delete('/vehiculos/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    VehiculosSchema.findByIdAndUpdate(id, { active: false }, { new: true, runValidators: true }, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
+    Vehiculos.destroy({
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
 });
 
 export default app;

@@ -1,107 +1,54 @@
-import { Router, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { router as app } from './router';
-import * as _ from 'underscore';
 
-import MarcasSchema from '../models/marcas.model';
-import { MongoError } from 'mongodb';
+import { Marcas } from '../models/marcas.model';
 
-app.get('/marcas', (req: Request, res: Response) => {
-    MarcasSchema.find({ active: true })
-        .sort({ nombre: 1 })
-        .exec((err, data) => {
-            if (err) {
-                return res.status(400).json({
-                    ok: false,
-                    err
-                });
-            }
+app.get('/marcas', (res: Response) => {
 
-            res.json({
-                ok: true,
-                data
-            });
-        });
+    Marcas.findAll({
+        order: ['nombre']
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.get('/marcas/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    MarcasSchema.findById(id).exec((err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data
-        });
-    });
+    Marcas.findByPk(id)
+        .then((data) => res.json({ ok: true, data })
+        ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.post('/marcas', (req: Request, res: Response) => {
     let body = req.body;
 
-    let values = new MarcasSchema({
+    Marcas.create({
         nombre: body.nombre,
-    });
-
-    MarcasSchema.create(values, (err: MongoError, data: any) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data
-        });
-    });
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.put('/marcas/:id', (req: Request, res: Response) => {
     const id = req.params.id;
-    let body = _.pick(req.body, [
-        'nombre',
-        'active',
-    ]);
+    let body = req.body;
 
-    MarcasSchema.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
+    Marcas.update({
+        nombre: body.nombre,
+    }, {
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 });
 
 app.delete('/marcas/:id', (req: Request, res: Response) => {
     const id = req.params.id;
 
-    MarcasSchema.findByIdAndUpdate(id, { active: false }, { new: true, runValidators: true }, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
+    Marcas.destroy({
+        where: { id }
+    }).then((data) => res.json({ ok: true, data })
+    ).catch(err => res.status(400).json({ ok: false, err }));
 
-        res.json({
-            ok: true,
-            data: data
-        });
-    });
 });
 
 export default app;

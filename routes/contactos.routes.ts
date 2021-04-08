@@ -4,24 +4,6 @@ import { router as app } from './router';
 import { Contactos } from '../models/contacto.model';
 import { Usuarios } from '../models/usuarios.model';
 
-// app.get('/contactos', (req: Request, res: Response) => {
-//     ContactosSchema.find()
-//         .sort({ nombre: 1 })
-//         .exec((err, data) => {
-//             if (err) {
-//                 return res.status(400).json({
-//                     ok: false,
-//                     err
-//                 });
-//             }
-
-//             res.json({
-//                 ok: true,
-//                 data
-//             });
-//         });
-// });
-
 // Contactos de cierta persona
 app.get('/contactos/de/:id', (req: Request, res: Response) => {
     const id = req.params.id;
@@ -45,15 +27,6 @@ app.post('/contactos', (req: Request, res: Response) => {
     }).then((data) => res.json({ ok: true, data })
     ).catch(err => res.status(400).json({ ok: false, err }));
 });
-
-/* app.put('/contactos/alerta/:id', (req: Request, res: Response) => {
-    const id = req.params.id;
-
-    return res.json({
-        ok: true,
-        id
-    });
-}); */
 
 app.delete('/contactos/:id', (req: Request, res: Response) => {
     const id = req.params.id;
