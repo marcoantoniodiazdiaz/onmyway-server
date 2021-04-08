@@ -1,5 +1,5 @@
 
-import { DataTypes, Model } from 'sequelize/types';
+import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/database';
 
 export class Vehiculos extends Model { }
@@ -14,6 +14,7 @@ Vehiculos.init({
             max: 10,
         },
     },
+
     submarca: {
         type: DataTypes.STRING,
         allowNull: false,

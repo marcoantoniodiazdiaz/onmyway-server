@@ -1,13 +1,13 @@
 
 import { Router, Request, Response } from 'express';
 import Server from '../classes/server';
-import { usuariosConectados } from '../sockets/socket';
+// import { usuariosConectados } from '../sockets/socket';
 import { Mapa } from '../classes/mapa';
 import { ViajesLista } from '../classes/viajes-lista';
 import axios from 'axios';
 
 const router = Router();
-const mapa = new Mapa();
+// const mapa = new Mapa();
 const viajes = new ViajesLista();
 
 export { router };
@@ -60,7 +60,7 @@ router.get('/sockets/usuarios', (req: Request, res: Response) => {
 router.get('/sockets/usuarios/detalle', (req: Request, res: Response) => {
     res.json({
         ok: true,
-        clientes: usuariosConectados.getLista()
+        // clientes: usuariosConectados.getLista()
     });
 });
 

@@ -1,5 +1,5 @@
 import { Viajes } from './viajes';
-import { usuariosConectados } from '../sockets/socket';
+// import { usuariosConectados } from '../sockets/socket';
 
 
 export class ViajesLista {
@@ -63,7 +63,7 @@ export class ViajesLista {
 
     // Todos los viajes a los que pertenece un usuario
     public getViajesPorUsuario(usuario: string) {
-        usuario = usuariosConectados.getUsuario(usuario)?.idDatabase!;
+        // usuario = usuariosConectados.getUsuario(usuario)?.idDatabase!;
         console.log(this.lista);
         return this.lista.filter(viaje => (viaje.usuarioId === usuario || viaje.conductorId === usuario) && (viaje.estado === 'ACCEPTED' || viaje.estado === 'INPROGRESS'));
     }

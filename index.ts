@@ -7,7 +7,7 @@ import vehiculos from './routes/vehiculos.routes'
 import login from './routes/login.routes'
 import viajes from './routes/viajes.routes'
 import config from './routes/config.routes'
-import mercadopago from './routes/mercadopago.routes'
+// import mercadopago from './routes/mercadopago.routes'
 import contactos from './routes/contactos.routes'
 import codes from './routes/codes.routes'
 import archivos from './routes/archivos.routes'
@@ -38,7 +38,7 @@ server.app.use('/api', vehiculos);
 server.app.use('/api', login);
 server.app.use('/api', viajes);
 server.app.use('/api', config);
-server.app.use('/api', mercadopago);
+// server.app.use('/api', mercadopago);
 server.app.use('/api', contactos);
 server.app.use('/api', codes);
 server.app.use('/api', archivos);
