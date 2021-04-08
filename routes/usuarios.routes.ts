@@ -5,13 +5,15 @@ import bcrypt from 'bcrypt';
 import { Usuarios } from '../models/usuarios.model';
 
 
-app.get('/usuarios', /*[verificaToken, verificaAdmin_Role],*/(res: Response) => {
+app.get('/usuarios', /*[verificaToken, verificaAdmin_Role],*/(req: Request, res: Response) => {
     Usuarios.findAll({
         order: [
             ['nombre', 'DESC'],
         ]
     }).then((data) => res.json({ ok: true, data })
     ).catch(err => res.status(400).json({ ok: false, err }));
+
+
 });
 
 app.get('/usuarios/:id', /*[verificaToken],*/(req: Request, res: Response) => {

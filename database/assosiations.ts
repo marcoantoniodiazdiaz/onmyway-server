@@ -4,15 +4,16 @@ import { Vehiculos } from '../models/vehiculos.model';
 import { Archivos } from '../models/archivos.model';
 import { Contactos } from '../models/contacto.model';
 import { Marcas } from '../models/marcas.model';
+import { Calificaciones } from '../models/calificaciones.model';
 
 
 
 export const createAssosiations = () => {
 
-    Usuarios.hasMany(Viajes, { foreignKey: 'usuario' });
+    Usuarios.hasMany(Viajes, { as: 'usuario' });
     Viajes.belongsTo(Usuarios);
 
-    Usuarios.hasMany(Viajes, { foreignKey: 'conductor' });
+    Usuarios.hasMany(Viajes, { as: 'conductor' });
     Viajes.belongsTo(Usuarios);
 
     Vehiculos.hasMany(Viajes);
@@ -29,6 +30,9 @@ export const createAssosiations = () => {
 
     Marcas.hasMany(Vehiculos);
     Vehiculos.belongsTo(Marcas);
+
+    Usuarios.hasMany(Calificaciones);
+    Calificaciones.belongsTo(Usuarios);
 
     // Usuarios y Heroes
     // Users.hasMany(Heroes, { as: 'heroeOf', foreignKey: 'heroeOfId' });

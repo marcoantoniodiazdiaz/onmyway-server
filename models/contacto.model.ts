@@ -9,7 +9,7 @@ Contactos.init({
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            is: /^[a-ZA-Z\s]{5,255}$/
+            is: /^[a-zA-Z\s]{5,255}$/
         },
     },
     email: {

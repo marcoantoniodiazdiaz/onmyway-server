@@ -17,8 +17,6 @@ import cors from 'cors';
 import express from 'express';
 import path from 'path';
 
-
-
 const server = Server.instance;
 
 // BodyParser

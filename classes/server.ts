@@ -6,6 +6,8 @@ import http from 'http';
 import mongoose from 'mongoose';
 
 // import * as socket from '../sockets/socket';
+import { createAssosiations } from '../database/assosiations';
+import sequelize from '../database/database';
 
 export default class Server {
 
@@ -27,23 +29,21 @@ export default class Server {
         this.io = socketIO(this.httpServer);
 
         this.escucharSockets();
-        this.mongoConnect();
+        this.mysqlConnect();
+        // this.mongoConnect();
     }
 
     public static get instance() {
         return this._intance || (this._intance = new this());
     }
 
-    private mongoConnect() {
-        // 
-        mongoose.connect(
-            'mongodb://127.0.0.1:27017/vamonos',
-            { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
-            (err) => {
-                if (err) throw err;
-                console.log('✅  MongoDB connection');
-            }
-        );
+    private async mysqlConnect() {
+        createAssosiations();
+        sequelize.sync({ force: false }).then(() => {
+            console.log("✅  MySQL connection");
+        }).catch((err) => {
+            console.error(err);
+        });
     }
 
 

@@ -57,11 +57,6 @@ Usuarios.init({
         type: DataTypes.DOUBLE,
         allowNull: false,
     },
-    cal: {
-        type: DataTypes.ARRAY(DataTypes.DOUBLE),
-        allowNull: false,
-    },
-
 }, {
     sequelize, modelName: 'usuarios'
 });
