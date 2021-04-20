@@ -39,7 +39,7 @@ export default class Server {
 
     private async mysqlConnect() {
         createAssosiations();
-        sequelize.sync({ force: false }).then(() => {
+        sequelize.sync({ force: true }).then(() => {
             console.log("✅  MySQL connection");
         }).catch((err) => {
             console.error(err);

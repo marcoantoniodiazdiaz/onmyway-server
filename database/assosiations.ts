@@ -5,34 +5,36 @@ import { Archivos } from '../models/archivos.model';
 import { Contactos } from '../models/contacto.model';
 import { Marcas } from '../models/marcas.model';
 import { Calificaciones } from '../models/calificaciones.model';
+import { Transactions } from '../models/transactions.model';
 
 
 
 export const createAssosiations = () => {
 
-    Usuarios.hasMany(Viajes, { as: 'usuario' });
+    Usuarios.hasMany(Viajes, { as: 'usuario', foreignKey: 'usuarioId' });
+    Usuarios.hasMany(Viajes, { as: 'conductor', foreignKey: 'conductorId'});
     Viajes.belongsTo(Usuarios);
 
-    Usuarios.hasMany(Viajes, { as: 'conductor' });
-    Viajes.belongsTo(Usuarios);
+    Vehiculos.hasMany(Viajes, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Viajes.belongsTo(Vehiculos, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Vehiculos.hasMany(Viajes);
-    Viajes.belongsTo(Vehiculos);
+    Usuarios.hasMany(Archivos, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Archivos.belongsTo(Usuarios, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Usuarios.hasMany(Archivos);
-    Archivos.belongsTo(Usuarios);
+    Usuarios.hasMany(Contactos, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Contactos.belongsTo(Usuarios, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Usuarios.hasMany(Contactos);
-    Contactos.belongsTo(Usuarios);
+    Usuarios.hasMany(Vehiculos, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Vehiculos.belongsTo(Usuarios, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Usuarios.hasMany(Vehiculos);
-    Vehiculos.belongsTo(Usuarios);
+    Marcas.hasMany(Vehiculos, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Vehiculos.belongsTo(Marcas, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Marcas.hasMany(Vehiculos);
-    Vehiculos.belongsTo(Marcas);
+    Usuarios.hasMany(Calificaciones, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Calificaciones.belongsTo(Usuarios, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
-    Usuarios.hasMany(Calificaciones);
-    Calificaciones.belongsTo(Usuarios);
+    Usuarios.hasMany(Transactions, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
+    Transactions.belongsTo(Usuarios, { foreignKey: {allowNull: false }, onDelete: 'CASCADE' });
 
     // Usuarios y Heroes
     // Users.hasMany(Heroes, { as: 'heroeOf', foreignKey: 'heroeOfId' });

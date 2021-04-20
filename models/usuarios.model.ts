@@ -53,10 +53,6 @@ Usuarios.init({
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
-    fondos: {
-        type: DataTypes.DOUBLE,
-        allowNull: false,
-    },
 }, {
     sequelize, modelName: 'usuarios'
 });

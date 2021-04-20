@@ -14,7 +14,6 @@ import archivos from './routes/archivos.routes'
 // 
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express from 'express';
 import path from 'path';
 
 const server = Server.instance;
@@ -26,7 +25,7 @@ server.app.use(bodyParser.json());
 // CORS
 server.app.use(cors({ origin: true, credentials: true }));
 
-server.app.use('/', (express.static('public', { redirect: false })));
+// server.app.use('/', (express.static('public', { redirect: false })));
 
 // Rutas de servicios
 server.app.use('/api', router);
@@ -36,7 +35,6 @@ server.app.use('/api', vehiculos);
 server.app.use('/api', login);
 server.app.use('/api', viajes);
 server.app.use('/api', config);
-// server.app.use('/api', mercadopago);
 server.app.use('/api', contactos);
 server.app.use('/api', codes);
 server.app.use('/api', archivos);
