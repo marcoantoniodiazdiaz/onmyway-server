@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize';
 const sequelize = new Sequelize({
     database: 'onmyway',
     host: 'localhost',
-    password: 'pataPON3',
+    password: 'root',
     username: 'root',
     dialect: 'mysql',
     logging: false,

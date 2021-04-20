@@ -1,5 +1,3 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { ObjectId } from 'mongodb';
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/database';
 
