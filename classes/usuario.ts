@@ -5,25 +5,25 @@ export class Usuario {
     public id: string;
     public nombre: string;
     public tipo: string;
-    public idDatabase: string | null;
+    public database: string;
     // Adicionales
     public lat: number;
     public lon: number;
     public emitiendo: boolean;
-    public nToken: string;
-    public coche: string;
+    public token: string;
+    public coche: object | null;
 
     constructor(id: string) {
         this.id = id;
-        this.nombre = 'device-unknown';
+        this.nombre = 'unknown';
         this.tipo = 'unknown';
-        this.idDatabase = null;
+        this.database = 'unknown';
         // Adicionales
         this.lat = 0;
         this.lon = 0;
         this.emitiendo = false;
-        this.nToken = 'unknown';
-        this.coche = 'No seleccionado';
+        this.token = 'unknown';
+        this.coche = null;
     }
 
 }

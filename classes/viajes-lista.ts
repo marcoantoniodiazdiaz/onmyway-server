@@ -42,12 +42,10 @@ export class ViajesLista {
     }
 
 
-    public agregarConductorViaje(id: string, conductor: string, conductorId: string, conductorFoto: string, coche: object) {
+    public agregarConductorViaje(id: string, conductor: { socket: string, data: object }, coche: object) {
         for (let viaje of this.lista) {
             if (viaje.id === id) {
                 viaje.conductor = conductor;
-                viaje.conductorId = conductorId;
-                viaje.conductorFoto = conductorFoto;
                 viaje.coche = coche;
                 break;
             }
@@ -62,9 +60,9 @@ export class ViajesLista {
     }
 
     // Todos los viajes a los que pertenece un usuario
-    public getViajesPorUsuario(usuario: string) {
+    public getViajesPorUsuario(socket: string) {
         // usuario = usuariosConectados.getUsuario(usuario)?.idDatabase!;
         console.log(this.lista);
-        return this.lista.filter(viaje => (viaje.usuarioId === usuario || viaje.conductorId === usuario) && (viaje.estado === 'ACCEPTED' || viaje.estado === 'INPROGRESS'));
+        return this.lista.filter(viaje => (viaje.usuario.socket === socket || viaje.conductor?.socket === socket) && (viaje.estado === 'ACCEPTED' || viaje.estado === 'INPROGRESS'));
     }
 }

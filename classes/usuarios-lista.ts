@@ -14,13 +14,13 @@ export class UsuariosLista {
         return usuario
     }
 
-    public actualizarNombre(id: string, nombre: string, idDatabase: string, tipo: string, nToken: string) {
+    public actualizarNombre(id: string, nombre: string, database: string, tipo: string, token: string) {
         for (let usuario of this.lista) {
             if (usuario.id === id) {
                 usuario.nombre = nombre;
-                usuario.idDatabase = idDatabase;
+                usuario.database = database;
                 usuario.tipo = tipo;
-                usuario.nToken = nToken;
+                usuario.token = token;
                 break;
             }
         }
@@ -48,21 +48,21 @@ export class UsuariosLista {
         return tempUsuario;
     }
 
-    public actualizaPosicion(id: string, lat: number, lon: number, idDatabase: string) {
+    public actualizaPosicion(id: string, lat: number, lon: number, database: string) {
         for (let usuario of this.lista) {
             if (usuario.id === id) {
                 usuario.lat = lat;
                 usuario.lon = lon;
-                usuario.idDatabase = idDatabase;
+                usuario.database = database;
                 break;
             }
         }
     }
 
-    public cambiarCoche(id: string, nuevoCoche: string) {
+    public cambiarCoche(id: string, coche: object) {
         for (let usuario of this.lista) {
             if (usuario.id === id) {
-                usuario.coche = nuevoCoche;
+                usuario.coche = coche;
                 break;
             }
         }
@@ -80,20 +80,20 @@ export class UsuariosLista {
         }
     }
 
-    public verIdDeSocket(idDatabase: string) {
+    public verIdDeSocket(database: string) {
         for (let usuario of this.lista) {
-            if (usuario.idDatabase === idDatabase) {
+            if (usuario.database === database) {
                 return usuario.id
             }
         }
     }
 
-    public verIdLista(idDatabase: string) {
+    public verIdLista(database: string) {
 
         const ids = [];
 
         for (let usuario of this.lista) {
-            if (usuario.idDatabase === idDatabase) {
+            if (usuario.database === database) {
                 ids.push(usuario.id);
             }
         }
