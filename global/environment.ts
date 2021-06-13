@@ -1,3 +1,3 @@
 
 
-export const SERVER_PORT: number = Number(process.env.PORT) || 5005;
+export const SERVER_PORT: number = Number(process.env.PORT) || 5020;
