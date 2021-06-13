@@ -37,6 +37,7 @@ export default class Server {
         return this._intance || (this._intance = new this());
     }
 
+<<<<<<< HEAD
     private async mysqlConnect() {
         createAssosiations();
         sequelize.sync({ force: true }).then(() => {
@@ -44,6 +45,18 @@ export default class Server {
         }).catch((err) => {
             console.error(err);
         });
+=======
+    private mongoConnect() {
+        // 
+        mongoose.connect(
+            'mongodb://127.0.0.1:27017/onmyway',
+            { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true },
+            (err) => {
+                if (err) throw err;
+                console.log('✅  MongoDB connection');
+            }
+        );
+>>>>>>> mongosee
     }
 
 
